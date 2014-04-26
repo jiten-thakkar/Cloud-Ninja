@@ -1,8 +1,6 @@
-function authenticateDb(callback){
-	console.log('here');
-		
-		var client = new Dropbox.Client({ key: "kxims84ljqwzxvp" });
-		return client.authenticate(callback);
+function authoriseDb(callback){
+	var client = new Dropbox.Client({ key: "kxims84ljqwzxvp" });
+	return client.authenticate(callback);
 };
 function showError(error) {
 	  switch (error.status) {
