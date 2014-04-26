@@ -1,4 +1,4 @@
-package cloud.app;
+package cloud.app.servlets;
 
 import java.io.IOException;
 

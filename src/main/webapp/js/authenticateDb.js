@@ -1,14 +1,9 @@
 
-$(function dbtogd(){
+function authenticateDb(){
 	console.log('here');
-	$.ajax({
-		type: "GET",
-		url: "//cdnjs.cloudflare.com/ajax/libs/dropbox.js/0.10.2/dropbox.min.js",
-		dataType: "script"
-		}).done(function(){
 		
 		var client = new Dropbox.Client({ key: "kxims84ljqwzxvp" });
-		client.authenticate(function(error, client) {
+		return client.authenticate(function(error, client) {
 			  if (error) {
 			    
 			    return showError(error);
@@ -24,9 +19,10 @@ $(function dbtogd(){
 				 });
 			  });
 			  $("#unlink_db").show();
-			  showFileList(client);
-			});
-	});
+			  //console.log(client.credentials().token);
+			  //showFileList(client);
+		});
+};
 	function showError(error) {
 		  switch (error.status) {
 		  case Dropbox.ApiError.INVALID_TOKEN:
@@ -62,7 +58,7 @@ $(function dbtogd(){
 			    return showError(error);  // Something went wrong.
 			  }
 
-			  alert("Your Dropbox contains " + entries.join(", "));
+			  //alert("Your Dropbox contains " + entries.join(". "));
+			  //var myApp = angular.module('myApp', ['angularTreeview']);
 			});
 	};
-});
