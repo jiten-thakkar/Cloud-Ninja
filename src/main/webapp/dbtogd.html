@@ -3,35 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <title>Cloud Ninja</title>
+
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/dropbox.js/0.10.2/dropbox.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+<script type="text/javascript" src="https://apis.google.com/js/client.js"></script>
 <script type="text/javascript" src="js/static/treeview.min.js"></script>
 <script type="text/javascript" src="js/authenticateDb.js"></script>
+<script type="text/javascript" src="js/authenticateGd.js"></script>
+
 <link rel="stylesheet" type="text/css" href="css/treeview.css">
+
 <script type="text/javascript">
+
+function DbCallback(error, client) {
+	  if (error) {
+	    return showError(error);
+	  }
+	  $("#unlink_db").click(function(){
+		  $(this).prop("disabled",true);
+		 client.signOut({mustInvalidate: true}, function(error){
+			 if(error) {
+				 alert("Couldn't unlink");
+				 $("#unlink_db").prop("disabled",false);
+				 return;
+			 }
+			 $("#unlink_db").hide();
+			 alert('Unlinked');
+			 parent.location='index.html';
+		 });
+	  });
+	  $("#unlink_db").show();
+}
+
+function GDFirstCallback(authResult) {
+    if (authResult && !authResult.error) {
+      GDAuthSuccess(authResult);
+    } else if(!authResult) {
+      gapi.auth.authorize(
+              {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': false},
+              GDSecondCallback);
+      } else {
+    	  alert('Try Again.');
+      }
+  }
+function GDSecondCallback(authResult) {
+	if (authResult && !authResult.error) {
+	      GDAuthSuccess(authResult);
+	    } else {
+	    	  alert('Something went wrong');
+	      }
+}
+
+function GDAuthSuccess(authResult) {
+	$("#unlink_gd").show();
+    $("#unlink_gd").click(function(){
+  	  $(this).prop("disabled",true);
+  	  $.ajax({
+  		  url: 'https://accounts.google.com/o/oauth2/revoke?token='+authResult.access_token,
+  	  }).done(function(){
+  		  $("#unlink_gd").hide();
+  		  alert('Google Drive Unlinked from the app');
+  	  }).fail(function(jqXHR, textStatus){
+  		  $("#unlink_gd").hide();
+  		  alert('Google Drive Unlinked from the app');
+  	  });
+    });
+    alert(authResult.access_token);
+}
+
 $(document).ready(function(){
 	$("#unlink_db").hide();	
-	/* $.ajax({
-	type: "GET",
-	url: "js/dbtogd.js",
-	dataType: "script"
-	}); */
-	authenticateDb();
-	/* if(client instanceof Dropbox.Client)
-		{alert('instance');} */
-	//console.log(client.credentials().token);
-	//$scope.$apply(fileTree(client, "/"));
+	authenticateDb(DbCallback);
 });
+function authenticateGd() {
+	$("#copy").prop("disabled", true);
+	authoriseGD(GDFirstCallback);
+}
 (function fileTree() {
-	//angular module
     var myApp = angular.module('fileViewer', ['oci.treeview']);
     var client = authenticateDb();
-    //console.log(client.credentials().token);
-    //test controller
     
     myApp.controller('AppCtrl', function ($scope, $timeout) {
-    	
     	function parseFileNames(entries, directory) {
     		var files = [];
     		for(var i=0; i<entries.length; i++) {
@@ -43,13 +96,10 @@ $(document).ready(function(){
   				if(patt.test(entries[i])) {
   					tempNode.state = 'leaf';
   					tempNode.visited = true;
-  					//console.log(entries[i]+" true");
   				}
   				else{
   					tempNode.state = 'collapsed';
-  					//console.log(entries[i]+" false");
-  				}
-  				  				
+  				}  				  				
   				files.push(tempNode);
   			  }
     		return files;
@@ -66,24 +116,15 @@ $(document).ready(function(){
 				  path: directory,
 				  children: []
 		    };
-			  //console.log("Your Dropbox contains " + entries.toString());
 				  
    			filelist.children = parseFileNames(entries, directory);
    			$scope.treeData = filelist;
    			console.log($scope.treeData);
    			$timeout();
-         	//treedata = filelist;
-         	//return filelist;
-   			  //var myApp = angular.module('myApp', ['angularTreeview']);
-   			});
+         	});
          };
         $scope.fetchFileList(client, "/");
-		//$scope.treeData = $scope.filelist;
-		//console.log(list);
-
-        // When a node is clicked on (icon or label), it will add a
-        // new child node. This happens only once per node due to
-        // the complete flag.
+		
         $scope.getMoreData = function (node) {
             return $timeout(function () {
             	if(!node.visited) {
@@ -100,11 +141,8 @@ $(document).ready(function(){
             	} 
             	if(node.state == 'leaf') {
             		$("#selected").text(node.label);
-            	}/* else if (node.state == 'collapsed') {
-                    node.state = 'expanded';
-                } else if (node.state == 'expanded') {
-                	node.state = 'collapsed';	
-                } */
+            		$("#copy").prop("disabled", false); 
+            	}
             });
         };
     });
@@ -112,15 +150,16 @@ $(document).ready(function(){
 </script>
 </head>
 <body>
-	<button id="unlink_db">Unlink Dropbox</button>
+	<b><h1><center>Cloud Ninja</center></h1></b>
+	<button id="unlink_db" style="display: none">Unlink Dropbox</button>
+	<button id="unlink_gd" style="display: none">Unlink Google Drive</button>
 	<textarea id="selected" rows="1" cols="100" style="position:relative; float:right" readonly></textarea>
-	<button id="copy" onClick="" style="position: relative; float:right">Copy</button>
+	<button id="copy" disabled="true" onClick="authenticateGd()" style="position: relative; float:right">Copy</button>
 	<b><h3 style=" float:right">Selected File</h3></b>
 	<div data-ng-app="fileViewer">
     <div data-ng-controller="AppCtrl">
         <oci.treeview tree="treeData" on-select-node="getMoreData">
         <span ng-click="selectNode(tree)">{{tree.label}}</span></oci.treeview>
-        
     </div>
 </div>
 </body>
