@@ -37,7 +37,6 @@ function DbCallback(error, client) {
 		 });
 	  });
 	  $("#unlink_db").prop("disabled",false);
-	  //$.event.trigger({type: "authenticateGd"});
 	  authenticateGd();
 }
 
@@ -49,6 +48,7 @@ function GDFirstCallback(authResult) {
               {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': false},
               GDSecondCallback);
       } else {
+    	  $("#gd_text").hide();
     	  alert("Couldn't accesss Google Drive. Try Again.");
       }
   }
@@ -56,7 +56,8 @@ function GDSecondCallback(authResult) {
 	if (authResult && !authResult.error) {
 	      GDAuthSuccess(authResult);
 	    } else {
-	    	  alert('Something went wrong');
+	    	  $("#gd_text").hide();
+	    	  alert('Something went wrong. Please refresh the page.');
 	      }
 }
 function GDAuthSuccess(authResult) {
@@ -202,13 +203,13 @@ controller('AppCtrl', function ($scope, $timeout) {
 </head>
 <body>
 	<b><h1><center>Cloud Ninja</center></h1></b>
-	<button id="unlink_db" >Unlink Dropbox</button>
+	<button id="unlink_db" style="display: none">Unlink Dropbox</button>
 	<button id="unlink_gd" style="display: none">Unlink Google Drive</button>
 	<b><h3 id="selected_file" style=" float:right; display: none" >Selected File Name</h3></b>
 	<textarea id="selected" rows="1" cols="100" style="position:relative; float:right; display: none" readonly></textarea>
 	<button id="copy" disabled="true" style="position: relative; float:right; display: none">Copy</button>
 	<center><h3 id="loading" style="display: none">Loading File List...</h3></center>
-	<center><h3 id="db_text" style="display: none">Redirecting to Dropbox...</h3></center>
+	<center><h3 id="db_text" >Redirecting to Dropbox...</h3></center>
 	<center><h3 id="gd_text" style="display: none">Redirecting to Google Drive...</h3></center>
 	<center><h3 id="copying" style="display: none">Copying...</h3></center>
 	<div  data-ng-app="fileViewer">
