@@ -17,7 +17,6 @@ import cloud.app.services.googledrive.GoogleDriveCredentials;
 import cloud.app.services.googledrive.GoogleDriveResponse;
 import cloud.app.utils.ResponceCode;
 
-import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
 
 /**
@@ -86,12 +85,13 @@ public class DBtoGD extends HttpServlet {
 			writer.endObject();
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 			writer.beginObject();
 			writer.beginObject();
 			writer.name("code").value(ResponceCode.FAILED.getCode());
 			writer.name("message").value(ResponceCode.FAILED.getMessage());
 			writer.endObject();
+			
+			e.printStackTrace();
 		} finally {
 			writer.close();
 		}

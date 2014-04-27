@@ -68,14 +68,16 @@ function GDAuthSuccess(authResult) {
     $("#gd_text").hide();
     $("#unlink_gd").click(function(){
   	  $(this).prop("disabled",true);
-  	  $.ajax({
-  		  url: 'https://accounts.google.com/o/oauth2/revoke?token='+authResult.access_token,
-  	  }).done(function(){
-  		  $("#unlink_gd").hide();
-  		  alert('Google Drive Unlinked from the app');
+  	  $.get('RevokeGDAccess', {gdtoken: authResult.access_token})
+  	  .done(function(data){
+  		  alert(data.message);
+  		  if(data.code == 1)
+  			{$("#unlink_gd").hide();$("#copy").hide();$("#selected_file").hide();$("#selected").hide();}
+  		  else
+  			  {$("#unlink_gd").show();}
   	  }).fail(function(jqXHR, textStatus){
-  		  $("#unlink_gd").hide();
-  		  alert('Google Drive Unlinked from the app');
+  		  $("#unlink_gd").show();
+  		  alert(data.message);
   	  });
     });
     GDAuthObject = authResult;
@@ -194,7 +196,7 @@ controller('AppCtrl', function ($scope, $timeout) {
 </head>
 <body>
 	<b><h1><center>Cloud Ninja</center></h1></b>
-	<button id="unlink_db" style="display: none">Unlink Dropbox</button>
+	<button id="unlink_db" >Unlink Dropbox</button>
 	<button id="unlink_gd" style="display: none">Unlink Google Drive</button>
 	<b><h3 id="selected_file" style=" float:right; display: none" >Selected File Name</h3></b>
 	<textarea id="selected" rows="1" cols="100" style="position:relative; float:right; display: none" readonly></textarea>
