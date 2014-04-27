@@ -104,26 +104,33 @@ $(window).load(function(){
 	});
 	$("#copy").click(function() {
 		$("#copy").prop("disabled", true);
-		$("#copying").show();
 		var file_path = $("#selected").val();
-		//var client = authoriseDb(); 
-		if(client && GDAuthObject) {
-			 $.get('DBtoGD',{
-				    filePath: file_path,
-	                dbtoken: client._credentials.token,
-	                gdtoken: GDAuthObject.access_token,
-	                gdtokenExpiresIn: GDAuthObject.expires_in,
-	                gdtokenState: GDAuthObject.state
-			}).done(function(data) {
-				$("#copying").hide();
+		client.stat(file_path, null, function(error, stat){
+			console.log('size='+stat.size)
+			if(stat.size <= 10 * 1024 * 1024) {
+				$("#copying").show();
+		        if(client && GDAuthObject) {
+		             $.get('DBtoGD',{
+		                    filePath: file_path,
+		                    dbtoken: client._credentials.token,
+		                    gdtoken: GDAuthObject.access_token,
+		                    gdtokenExpiresIn: GDAuthObject.expires_in,
+		                    gdtokenState: GDAuthObject.state
+		            }).done(function(data) {
+		                $("#copying").hide();
+		                $("#copy").prop("disabled", false);
+		                alert(data.message);
+		            }).fail(function() {
+		                $("#copying").hide();
+		                $("#copy").prop("disabled", false);
+		                alert("Couldn't copy the file.")
+		            });
+		        }
+			} else {
+				alert('File bigger than 10 MB');
 				$("#copy").prop("disabled", false);
-				alert(data.message);
-			}).fail(function() {
-				$("#copying").hide();
-				$("#copy").prop("disabled", false);
-				alert("Couldn't copy the file.")
-			});
-		}
+			}
+		});
 	});
 });
 angular.module('fileViewer', ['oci.treeview']).
@@ -169,7 +176,6 @@ controller('AppCtrl', function ($scope, $timeout) {
 	 $timeout();
    	});
    };
-    //$scope.fetchFileList(authoriseDb(), "/");
     $scope.getMoreData = function (node) {
         return $timeout(function () {
         	var client = authoriseDb();
