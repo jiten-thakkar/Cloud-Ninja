@@ -105,11 +105,10 @@ $(window).load(function(){
 	});
 	$("#copy").click(function() {
 		$("#copy").prop("disabled", true);
+		$("#copying").show();
 		var file_path = $("#selected").val();
 		client.stat(file_path, null, function(error, stat){
-			console.log('size='+stat.size)
 			if(stat.size <= 10 * 1024 * 1024) {
-				$("#copying").show();
 		        if(client && GDAuthObject) {
 		             $.get('DBtoGD',{
 		                    filePath: file_path,
@@ -130,6 +129,7 @@ $(window).load(function(){
 			} else {
 				alert('File bigger than 10 MB');
 				$("#copy").prop("disabled", false);
+				$("#copying").hide();
 			}
 		});
 	});
