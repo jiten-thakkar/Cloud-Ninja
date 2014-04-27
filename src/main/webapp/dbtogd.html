@@ -172,7 +172,6 @@ controller('AppCtrl', function ($scope, $timeout) {
   
 	 filelist.children = parseFileNames(entries, '');
 	 $scope.treeData = filelist;
-	 console.log($scope.treeData);
 	 $("#loading").hide();
 	 $timeout();
    	});
