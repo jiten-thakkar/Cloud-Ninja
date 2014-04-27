@@ -15,7 +15,8 @@
 <link rel="stylesheet" type="text/css" href="css/treeview.css">
 
 <script type="text/javascript">
-
+var GDAuthObject;
+$("#db_text").show();
 function DbCallback(error, client) {
 	  $("#db_text").hide();
 	  if (error) {
@@ -77,6 +78,7 @@ function GDAuthSuccess(authResult) {
   		  alert('Google Drive Unlinked from the app');
   	  });
     });
+    GDAuthObject = authResult;
     $.event.trigger({type: "fetchDBFileList"});
 }
 function authenticateGd() {
@@ -94,10 +96,32 @@ $(window).load(function(){
 	$("#copy").hide();
     $("#selected").hide();
     $("#selected_file").hide();
-    $("#db_text").show();
 	var client = authoriseDb(DbCallback);
 	$(document).on("fetchDBFileList", function() {
 		angular.element($("#fileViewer")).scope().fetchFileList(client, "/");
+	});
+	$("#copy").click(function() {
+		$("#copy").prop("disabled", true);
+		$("#copying").show();
+		var file_path = $("#selected").val();
+		//var client = authoriseDb(); 
+		if(client && GDAuthObject) {
+			 $.get('DBtoGD',{
+				    filePath: file_path,
+	                dbtoken: client._credentials.token,
+	                gdtoken: GDAuthObject.access_token,
+	                gdtokenExpiresIn: GDAuthObject.expires_in,
+	                gdtokenState: GDAuthObject.state
+			}).done(function(data) {
+				$("#copying").hide();
+				$("#copy").prop("disabled", false);
+				alert(data.message);
+			}).fail(function() {
+				$("#copying").hide();
+				$("#copy").prop("disabled", false);
+				alert("Couldn't copy the file.")
+			});
+		}
 	});
 });
 angular.module('fileViewer', ['oci.treeview']).
@@ -136,7 +160,7 @@ controller('AppCtrl', function ($scope, $timeout) {
 	  children: []
 	  };
   
-	 filelist.children = parseFileNames(entries, directory);
+	 filelist.children = parseFileNames(entries, '');
 	 $scope.treeData = filelist;
 	 console.log($scope.treeData);
 	 $("#loading").hide();
@@ -146,6 +170,7 @@ controller('AppCtrl', function ($scope, $timeout) {
     //$scope.fetchFileList(authoriseDb(), "/");
     $scope.getMoreData = function (node) {
         return $timeout(function () {
+        	var client = authoriseDb();
         	if(!node.visited) {
         		client.readdir(node.path, function(error, entries) {
          		if (error) {
@@ -159,7 +184,7 @@ controller('AppCtrl', function ($scope, $timeout) {
         		});
         	} 
         	if(node.state == 'leaf') {
-        		$("#selected").text(node.label);
+        		$("#selected").text(node.path);
         		$("#copy").prop("disabled", false); 
         	}
         });
@@ -171,12 +196,13 @@ controller('AppCtrl', function ($scope, $timeout) {
 	<b><h1><center>Cloud Ninja</center></h1></b>
 	<button id="unlink_db" style="display: none">Unlink Dropbox</button>
 	<button id="unlink_gd" style="display: none">Unlink Google Drive</button>
-	<b><h3 style=" float:right; display: none" id="selected_file">Selected File Name</h3></b>
+	<b><h3 id="selected_file" style=" float:right; display: none" >Selected File Name</h3></b>
 	<textarea id="selected" rows="1" cols="100" style="position:relative; float:right; display: none" readonly></textarea>
 	<button id="copy" disabled="true" style="position: relative; float:right; display: none">Copy</button>
 	<center><h3 id="loading" style="display: none">Loading File List...</h3></center>
-	<center><h3 id="db_text" style="display: none">Forwarding to Dropbox...</h3></center>
-	<center><h3 id="gd_text" style="display: none">Forwarding to Google Drive...</h3></center>
+	<center><h3 id="db_text" style="display: none">Redirecting to Dropbox...</h3></center>
+	<center><h3 id="gd_text" style="display: none">Redirecting to Google Drive...</h3></center>
+	<center><h3 id="copying" style="display: none">Copying...</h3></center>
 	<div  data-ng-app="fileViewer">
     <div data-ng-controller="AppCtrl" id="fileViewer">
         <oci.treeview tree="treeData" on-select-node="getMoreData">

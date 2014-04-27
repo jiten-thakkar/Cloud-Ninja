@@ -1,5 +1,10 @@
 package cloud.app.interfaces;
 
-public interface CloudService {
+import java.io.IOException;
 
+import cloud.app.utils.CloudFile;
+
+public interface CloudService {
+	CloudServiceResponse downloadFile(String filePath) throws IOException;
+	CloudServiceResponse uploadFile(CloudFile inputFIle, long length) throws IOException;
 }

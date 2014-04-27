@@ -69,11 +69,16 @@
   		<artifactId>dropbox-core-sdk</artifactId>
   		<version>[1.7,1.8)</version>
 	</dependency>
-	<dependency>
+	<!-- <dependency>
   		<groupId>com.google.apis</groupId>
     	<artifactId>google-api-services-drive</artifactId>
     	<version>v2-rev121-1.18.0-rc</version>
     </dependency>
+    <dependency>
+      <groupId>com.google.apis</groupId>
+      <artifactId>google-api-services-oauth2</artifactId>
+      <version>v2-rev68-1.18.0-rc</version>
+    </dependency> -->
     <dependency>
 		<groupId>javax</groupId>
 		<artifactId>javaee-api</artifactId>
