@@ -111,7 +111,7 @@ $(window).load(function(){
 		client.stat(file_path, null, function(error, stat){
 			if(stat.size <= 10 * 1024 * 1024) {
 		        if(client && GDAuthObject) {
-		             $.get('DBtoGD',{
+		             $.post('DBtoGD',{
 		                    filePath: file_path,
 		                    dbtoken: client._credentials.token,
 		                    gdtoken: GDAuthObject.access_token,
@@ -199,6 +199,7 @@ controller('AppCtrl', function ($scope, $timeout) {
         });
     };
 });
+
 
 
 
