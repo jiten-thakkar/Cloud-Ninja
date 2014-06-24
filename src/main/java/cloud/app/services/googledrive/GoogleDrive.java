@@ -1,13 +1,10 @@
 package cloud.app.services.googledrive;
 
-import java.io.IOException;
-
 import cloud.app.interfaces.CloudService;
 import cloud.app.interfaces.CloudServiceResponse;
 import cloud.app.interfaces.Credentials;
 import cloud.app.utils.CloudFile;
 import cloud.app.utils.ResponceCode;
-
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.ByteArrayContent;
@@ -17,6 +14,8 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
+
+import java.io.IOException;
 
 public class GoogleDrive implements CloudService {
 

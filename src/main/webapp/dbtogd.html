@@ -4,9 +4,11 @@
 <meta charset="UTF-8">
 <title>Cloud Ninja</title>
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/dropbox.js/0.10.2/dropbox.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript"
+        src="//cdnjs.cloudflare.com/ajax/libs/dropbox.js/0.10.2/dropbox.min.js"></script>
+<script type="text/javascript"
+        src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
 <script type="text/javascript" src="https://apis.google.com/js/client.js"></script>
 <script type="text/javascript" src="js/static/treeview.min.js"></script>
 <script type="text/javascript" src="js/authoriseDb.js"></script>
@@ -43,19 +45,18 @@ function DbCallback(error, client) {
 function GDFirstCallback(authResult) {
     if (authResult && !authResult.error) {
       GDAuthSuccess(authResult);
-    } else if(!authResult) {
+    } else  {
       gapi.auth.authorize(
               {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': false},
               GDSecondCallback);
-      } else {
-    	  $("#gd_text").hide();
-    	  alert("Couldn't accesss Google Drive. Try Again.");
       }
   }
 function GDSecondCallback(authResult) {
 	if (authResult && !authResult.error) {
 	      GDAuthSuccess(authResult);
 	    } else {
+	          console.log(authResult);
+	          console.log(authResult.error);
 	    	  $("#gd_text").hide();
 	    	  alert('Something went wrong. Please refresh the page.');
 	      }
@@ -198,23 +199,32 @@ controller('AppCtrl', function ($scope, $timeout) {
         });
     };
 });
+
+
+
 </script>
 </head>
 <body>
-	<b><h1><center>Cloud Ninja</center></h1></b>
-	<button id="unlink_db" style="display: none">Unlink Dropbox</button>
-	<button id="unlink_gd" style="display: none">Unlink Google Drive</button>
-	<b><h3 id="selected_file" style=" float:right; display: none" >Selected File Name</h3></b>
-	<textarea id="selected" rows="1" cols="100" style="position:relative; float:right; display: none" readonly></textarea>
-	<button id="copy" disabled="true" style="position: relative; float:right; display: none">Copy</button>
-	<center><h3 id="loading" style="display: none">Loading File List...</h3></center>
-	<center><h3 id="db_text" >Redirecting to Dropbox...</h3></center>
-	<center><h3 id="gd_text" style="display: none">Redirecting to Google Drive...</h3></center>
-	<center><h3 id="copying" style="display: none">Copying...</h3></center>
-	<div  data-ng-app="fileViewer">
+<b>
+    <h1>
+        <center>Cloud Ninja</center>
+    </h1>
+</b>
+<button id="unlink_db" style="display: none">Unlink Dropbox</button>
+<button id="unlink_gd" style="display: none">Unlink Google Drive</button>
+<b><h3 id="selected_file" style=" float:right; display: none">Selected File Name</h3></b>
+<textarea id="selected" rows="1" cols="100" style="position:relative; float:right; display: none"
+          readonly></textarea>
+<button id="copy" disabled="true" style="position: relative; float:right; display: none">Copy
+</button>
+<center><h3 id="loading" style="display: none">Loading File List...</h3></center>
+<center><h3 id="db_text">Redirecting to Dropbox...</h3></center>
+<center><h3 id="gd_text" style="display: none">Redirecting to Google Drive...</h3></center>
+<center><h3 id="copying" style="display: none">Copying...</h3></center>
+<div data-ng-app="fileViewer">
     <div data-ng-controller="AppCtrl" id="fileViewer">
         <oci.treeview tree="treeData" on-select-node="getMoreData">
-        <span ng-click="selectNode(tree)">{{tree.label}}</span></oci.treeview>
+            <span ng-click="selectNode(tree)">{{tree.label}}</span></oci.treeview>
     </div>
 </div>
 </body>

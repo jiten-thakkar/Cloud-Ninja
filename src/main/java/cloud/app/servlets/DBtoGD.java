@@ -1,13 +1,5 @@
 package cloud.app.servlets;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import cloud.app.services.dropbox.Dropbox;
 import cloud.app.services.dropbox.DropboxCredentials;
 import cloud.app.services.dropbox.DropboxResponse;
@@ -16,8 +8,14 @@ import cloud.app.services.googledrive.GoogleDrive;
 import cloud.app.services.googledrive.GoogleDriveCredentials;
 import cloud.app.services.googledrive.GoogleDriveResponse;
 import cloud.app.utils.ResponceCode;
-
 import com.google.gson.stream.JsonWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Servlet implementation class DBtoGD

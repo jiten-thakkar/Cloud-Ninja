@@ -1,18 +1,16 @@
 package cloud.app.servlets;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import cloud.app.utils.ResponceCode;
+import com.google.gson.stream.JsonWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import cloud.app.utils.ResponceCode;
-
-import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * Servlet implementation class RevokeGDAccess

@@ -1,8 +1,8 @@
 package cloud.app.interfaces;
 
-import java.io.IOException;
-
 import cloud.app.utils.CloudFile;
+
+import java.io.IOException;
 
 public interface CloudService {
 	CloudServiceResponse downloadFile(String filePath) throws IOException;
